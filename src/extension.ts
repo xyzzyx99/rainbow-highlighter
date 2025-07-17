@@ -11,12 +11,22 @@ function getTotalDecoratedInstances(
   highlightList: string[]
 ): number {
   let total = 0;
+  //  const editors = vscode.window.visibleTextEditors;
+
+  /*  for (const editor of editors) {
+     for (const word of highlightList) {
+       const ranges = getVarRangeList(editor, word);
+       total += ranges.length;
+     }
+   }
+  */
   vscode.window.visibleTextEditors.forEach(editor => {
     highlightList.forEach(word => {
       const ranges = getVarRangeList(editor, word);
       total += ranges.length;
     });
   });
+
   return total;
 }
 
@@ -24,6 +34,7 @@ export function activate(context: vscode.ExtensionContext) {
   let highlightList: string[] = []
   let colorMap: ColorMap = {}
   const decorator = Decorator.getInstance()
+  //let totalHighlights = 0
 
   const highlightOn = (editors: readonly vscode.TextEditor[], variable: string) => {
     // let old_length = highlightList.length;
@@ -106,9 +117,9 @@ export function activate(context: vscode.ExtensionContext) {
 
     let info1 = (1 === Math.abs(diff)) ? " highlight" : " highlights";
 
-    let info2 = (diff > 0) ? " added." : " removed.";
+    let info2 = (diff > 0) ? " added" : " removed";
 
-    vscode.window.showInformationMessage(Math.abs(diff) + info1 + info2);
+    vscode.window.showInformationMessage(Math.abs(diff) + info1 + info2 + " for current file. (There may be occurrences in other windows that can't be counted.)");
   }
 
   const removeAllHighlight = () => {
@@ -121,7 +132,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     let info = (1 === removed) ? " highlight" : " highlights";
 
-    vscode.window.showInformationMessage(removed + info + " removed.");
+    //vscode.window.showInformationMessage(removed + info + " removed.");
+    vscode.window.showInformationMessage(removed + info + " removed for current file. (There may be occurrences in other windows that can't be counted.)");
   }
 
   context.subscriptions.push(
