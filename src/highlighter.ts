@@ -90,17 +90,43 @@ class DecoratorClass {
 
     try {
       if (decoration === undefined) { //} || key === 'toString') {
-        decoration = this.colorPalette[colorIndex](hashed_key)
+        //decoration = this.colorPalette[colorIndex](hashed_key)
+
+        if (this.colorPalette[colorIndex] === undefined) {  // patch works
+          const color = 'lime';
+          decoration = vscode.window.createTextEditorDecorationType({
+            //backgroundColor: "red", // Pick something extreme!
+            backgroundColor: "#8F87F1", // Pick something extreme!
+            border: this.config["use-border"] ? `2px solid ${color}` : undefined,//"2px solid lime",
+            color: "white"
+          });
+
+          //decoration = vscode.window.createTextEditorDecorationType(buildColor];
+
+          this.decorationVarList[hashed_key] = decoration;
+        } else {
+          decoration = this.colorPalette[colorIndex](hashed_key)
+        }
       }
+
       editor.setDecorations(decoration, range)
     } catch {
       // When key === 'toString', there will be an exception and the word will not be highlighted
+      /*       decoration = vscode.window.createTextEditorDecorationType({
+              //        backgroundColor: "red", // Pick something extreme!
+              backgroundColor: "#8F87F1", // Pick something extreme!
+              border: "2px solid lime",
+              color: "white"
+            });
+       */
+      const color = 'lime';
       decoration = vscode.window.createTextEditorDecorationType({
-        //        backgroundColor: "red", // Pick something extreme!
+        //backgroundColor: "red", // Pick something extreme!
         backgroundColor: "#8F87F1", // Pick something extreme!
-        border: "2px solid lime",
+        border: this.config["use-border"] ? `2px solid ${color}` : undefined,//"2px solid lime",
         color: "white"
       });
+
 
       //      const decoration = this.colorPalette[colorIndex](hashed_key)
 
