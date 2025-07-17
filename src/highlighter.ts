@@ -1,6 +1,17 @@
 import * as vscode from "vscode"
 import { log } from "util"
 
+function simpleHashString(str: string): string {
+  //return str;
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash.toString();      // as decimal string (e.g., "-123456789")
+  // or: return Math.abs(hash).toString(16); // as hex string (e.g., "7f9b7a5")
+}
+
 //TODO add options
 class DecoratorClass {
   private decorationVarList: {
@@ -26,11 +37,12 @@ class DecoratorClass {
   ) => vscode.TextEditorDecorationType)[] = vscode.workspace
     .getConfiguration("rainbow-highlighter")
   ["palette"].map((color: string) => {
+    //    let varName = simpleHashString(varName);
     return (varName: string) => {
       const decoration = vscode.window.createTextEditorDecorationType(
         this.buildColor(color)
       )
-      this.decorationVarList[varName] = decoration
+      this.decorationVarList[simpleHashString(varName)] = decoration
       return decoration
     }
   });
@@ -72,11 +84,28 @@ class DecoratorClass {
     key: string,
     colorIndex: number
   ) {
+    key = simpleHashString(key);
     let decoration = this.decorationVarList[key]
-    if (decoration === undefined) {
-      decoration = this.colorPalette[colorIndex](key)
+
+    try {
+      if (decoration === undefined) { //} || key === 'toString') {
+        decoration = this.colorPalette[colorIndex](key)
+      }
+      editor.setDecorations(decoration, range)
+    } catch {
+      // When key === 'toString', there will be an exception and the word will not be highlighted
+      const decoration = vscode.window.createTextEditorDecorationType({
+        //        backgroundColor: "red", // Pick something extreme!
+        backgroundColor: "#8F87F1", // Pick something extreme!
+        border: "2px solid lime",
+        color: "white"
+      });
+
+      this.decorationVarList[key] = decoration;
+
+      //decoration = this.colorPalette[colorIndex](key)
+      editor.setDecorations(decoration, range)
     }
-    editor.setDecorations(decoration, range)
   }
 }
 
