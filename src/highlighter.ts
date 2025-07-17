@@ -8,7 +8,7 @@ function simpleHashString(str: string): string {
     hash = ((hash << 5) - hash) + str.charCodeAt(i);
     hash |= 0; // Convert to 32bit integer
   }
-  return hash.toString();      // as decimal string (e.g., "-123456789")
+  return hash.toString();// + str;      // as decimal string (e.g., "-123456789")
   // or: return Math.abs(hash).toString(16); // as hex string (e.g., "7f9b7a5")
 }
 
@@ -42,7 +42,8 @@ class DecoratorClass {
       const decoration = vscode.window.createTextEditorDecorationType(
         this.buildColor(color)
       )
-      this.decorationVarList[simpleHashString(varName)] = decoration
+      //     this.decorationVarList[simpleHashString(varName)] = decoration
+      this.decorationVarList[varName] = decoration
       return decoration
     }
   });
@@ -59,7 +60,7 @@ class DecoratorClass {
   public DecoratorClass() { }
 
   public removeHighlight(editors: readonly vscode.TextEditor[], key: string) {
-    const decoration = this.decorationVarList[key]
+    const decoration = this.decorationVarList[simpleHashString(key)]
     if (decoration) {
       editors.forEach(e => e.setDecorations(decoration, []))
     }
@@ -84,12 +85,12 @@ class DecoratorClass {
     key: string,
     colorIndex: number
   ) {
-    key = simpleHashString(key);
-    let decoration = this.decorationVarList[key]
+    let hashed_key = simpleHashString(key);
+    let decoration = this.decorationVarList[hashed_key]
 
     try {
       if (decoration === undefined) { //} || key === 'toString') {
-        decoration = this.colorPalette[colorIndex](key)
+        decoration = this.colorPalette[colorIndex](hashed_key)
       }
       editor.setDecorations(decoration, range)
     } catch {
@@ -101,7 +102,7 @@ class DecoratorClass {
         color: "white"
       });
 
-      this.decorationVarList[key] = decoration;
+      this.decorationVarList[hashed_key] = decoration;
 
       //decoration = this.colorPalette[colorIndex](key)
       editor.setDecorations(decoration, range)
