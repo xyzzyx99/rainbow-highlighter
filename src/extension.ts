@@ -7,12 +7,28 @@ interface ColorMap {
   [key: string]: number
 }
 
+function getTotalDecoratedInstances(
+  highlightList: string[]
+): number {
+  let total = 0;
+  vscode.window.visibleTextEditors.forEach(editor => {
+    highlightList.forEach(word => {
+      const ranges = getVarRangeList(editor, word);
+      total += ranges.length;
+    });
+  });
+  return total;
+}
+
 export function activate(context: vscode.ExtensionContext) {
   let highlightList: string[] = []
   let colorMap: ColorMap = {}
   const decorator = Decorator.getInstance()
 
   const highlightOn = (editors: readonly vscode.TextEditor[], variable: string) => {
+    // let old_length = highlightList.length;
+
+
     if (highlightList.indexOf(variable) < 0) {
       highlightList.push(variable)
     }
@@ -28,14 +44,35 @@ export function activate(context: vscode.ExtensionContext) {
         colorMap[variable]
       )
     })
+
+    // let new_length = highlightList.length;
+    // let added = new_length - old_length;
+
+    // let info = (1 === added) ? " highlight" : " highlights";
+
+    // decorator.removeHighlight(editors, variable)
+
+    // vscode.window.showInformationMessage(added + info + " added.");
   }
 
   const highlightOff = (editors: readonly vscode.TextEditor[], variable: string) => {
+
+    // let old_length = highlightList.length;
     highlightList = highlightList.filter(x => x !== variable)
+    // let new_length = highlightList.length;
+    // let removed = old_length - new_length;
+
+    // let info = (1 === removed) ? " highlight" : " highlights";
+
     decorator.removeHighlight(editors, variable)
+
+    // vscode.window.showInformationMessage(removed + info + " removed.");
   }
 
   const toggleHighlight = () => {
+
+    let old_length = getTotalDecoratedInstances(highlightList);
+
     const currentEditor = vscode.window.activeTextEditor
     if (!currentEditor) {
       return
@@ -63,13 +100,28 @@ export function activate(context: vscode.ExtensionContext) {
       delete colorMap[selectedText]
       decorator.clearVariable(selectedText)
     }
+
+    let new_length = getTotalDecoratedInstances(highlightList);
+    let diff = new_length - old_length;
+
+    let info1 = (1 === Math.abs(diff)) ? " highlight" : " highlights";
+
+    let info2 = (diff > 0) ? " added." : " removed.";
+
+    vscode.window.showInformationMessage(Math.abs(diff) + info1 + info2);
   }
 
   const removeAllHighlight = () => {
+    let removed = getTotalDecoratedInstances(highlightList);
+
     highlightList = []
     colorMap = {}
     const editors = vscode.window.visibleTextEditors
-    decorator.removeHighlights(editors)
+    decorator.removeHighlights(editors);
+
+    let info = (1 === removed) ? " highlight" : " highlights";
+
+    vscode.window.showInformationMessage(removed + info + " removed.");
   }
 
   context.subscriptions.push(
@@ -112,6 +164,9 @@ export function activate(context: vscode.ExtensionContext) {
   )
 
   const highlightLine = () => {
+
+    let old_length = getTotalDecoratedInstances(highlightList);
+
     const currentEditor = vscode.window.activeTextEditor
     if (!currentEditor) {
       return
@@ -132,6 +187,15 @@ export function activate(context: vscode.ExtensionContext) {
       .map(match => match.toString())
       .filter(word => Object.keys(colorMap).indexOf(word) < 0)
       .forEach(word => highlightOn(vscode.window.visibleTextEditors, word))
+
+    let new_length = getTotalDecoratedInstances(highlightList);
+    let diff = new_length - old_length;
+
+    let info1 = (1 === Math.abs(diff)) ? " highlight" : " highlights";
+
+    let info2 = (diff > 0) ? " added." : " removed.";
+
+    vscode.window.showInformationMessage(Math.abs(diff) + info1 + info2);
   }
 
   context.subscriptions.push(
