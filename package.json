@@ -2,7 +2,7 @@
   "name": "rainbow-highlighter",
   "displayName": "Rainbow Highlighter",
   "description": " Highlight multiple variables you select, with multiple colors, making important variables stand out in the code. Because more colors in our life == good :)",
-  "version": "0.0.7",
+  "version": "0.1.1",
   "publisher": "cobaltblu27",
   "engines": {
     "vscode": "^1.32.0"
@@ -57,6 +57,25 @@
         "title": "Rainbow Highlighter: Highlight all variables in line"
       }
     ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "rainbow-highlighter.toggleHighlight",
+          "group": "0navigation1@1",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "rainbow-highlighter.removeHighlight",
+          "group": "0navigation1@2",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "rainbow-highlighter.highlight-line",
+          "group": "0navigation1@3",
+          "when": "editorHasSelection"
+        }
+      ]
+    },
     "keybindings": [
       {
         "command": "rainbow-highlighter.toggleHighlight",

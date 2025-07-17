@@ -12,7 +12,7 @@ export function activate(context: vscode.ExtensionContext) {
   let colorMap: ColorMap = {}
   const decorator = Decorator.getInstance()
 
-  const highlightOn = (editors: vscode.TextEditor[], variable: string) => {
+  const highlightOn = (editors: readonly vscode.TextEditor[], variable: string) => {
     if (highlightList.indexOf(variable) < 0) {
       highlightList.push(variable)
     }
@@ -30,7 +30,7 @@ export function activate(context: vscode.ExtensionContext) {
     })
   }
 
-  const highlightOff = (editors: vscode.TextEditor[], variable: string) => {
+  const highlightOff = (editors: readonly vscode.TextEditor[], variable: string) => {
     highlightList = highlightList.filter(x => x !== variable)
     decorator.removeHighlight(editors, variable)
   }
@@ -79,7 +79,7 @@ export function activate(context: vscode.ExtensionContext) {
     )
   )
 
-  const renewHighlight = (editors: vscode.TextEditor[]) => {
+  const renewHighlight = (editors: readonly vscode.TextEditor[]) => {
     editors.forEach(editor => {
       highlightList.forEach(text => {
         const rangeList = getVarRangeList(editor, text)

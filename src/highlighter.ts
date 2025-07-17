@@ -46,7 +46,7 @@ class DecoratorClass {
 
   public DecoratorClass() { }
 
-  public removeHighlight(editors: vscode.TextEditor[], key: string) {
+  public removeHighlight(editors: readonly vscode.TextEditor[], key: string) {
     const decoration = this.decorationVarList[key]
     if (decoration) {
       editors.forEach(e => e.setDecorations(decoration, []))
@@ -57,7 +57,7 @@ class DecoratorClass {
     this.decorationVarList[key] = undefined
   }
 
-  public removeHighlights(editors: vscode.TextEditor[]) {
+  public removeHighlights(editors: readonly vscode.TextEditor[]) {
     Object.keys(this.decorationVarList)
       .map(k => this.decorationVarList[k])
       .filter(d => d)
