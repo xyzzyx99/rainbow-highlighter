@@ -85,7 +85,7 @@ class DecoratorClass {
     key: string,
     colorIndex: number
   ) {
-    let hashed_key = simpleHashString(key);
+    const hashed_key = simpleHashString(key);
     let decoration = this.decorationVarList[hashed_key]
 
     try {
@@ -95,12 +95,14 @@ class DecoratorClass {
       editor.setDecorations(decoration, range)
     } catch {
       // When key === 'toString', there will be an exception and the word will not be highlighted
-      const decoration = vscode.window.createTextEditorDecorationType({
+      decoration = vscode.window.createTextEditorDecorationType({
         //        backgroundColor: "red", // Pick something extreme!
         backgroundColor: "#8F87F1", // Pick something extreme!
         border: "2px solid lime",
         color: "white"
       });
+
+      //      const decoration = this.colorPalette[colorIndex](hashed_key)
 
       this.decorationVarList[hashed_key] = decoration;
 
