@@ -119,7 +119,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     let info2 = (diff > 0) ? " added" : " removed";
 
-    vscode.window.showInformationMessage(Math.abs(diff) + info1 + info2 + " for current file. (There may be occurrences in other windows that can't be counted.)");
+    vscode.window.showInformationMessage(Math.abs(diff) + info1 + info2 + " for current window. (Current total: " + new_length + ". There may be occurrences in other windows that can't be counted.)");
   }
 
   const removeAllHighlight = () => {
@@ -133,7 +133,7 @@ export function activate(context: vscode.ExtensionContext) {
     let info = (1 === removed) ? " highlight" : " highlights";
 
     //vscode.window.showInformationMessage(removed + info + " removed.");
-    vscode.window.showInformationMessage(removed + info + " removed for current file. (There may be occurrences in other windows that can't be counted.)");
+    vscode.window.showInformationMessage(removed + info + " removed for current window. (There may be occurrences in other windows that can't be counted.)");
   }
 
   context.subscriptions.push(
@@ -205,9 +205,11 @@ export function activate(context: vscode.ExtensionContext) {
 
     let info1 = (1 === Math.abs(diff)) ? " highlight" : " highlights";
 
-    let info2 = (diff > 0) ? " added." : " removed.";
+    let info2 = (diff > 0) ? " added" : " removed";
 
-    vscode.window.showInformationMessage(Math.abs(diff) + info1 + info2);
+    // vscode.window.showInformationMessage(Math.abs(diff) + info1 + info2);
+    vscode.window.showInformationMessage(Math.abs(diff) + info1 + info2 + " for current window. (Current total: " + new_length + ". There may be occurrences in other windows that can't be counted.)");
+
   }
 
   context.subscriptions.push(
