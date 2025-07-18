@@ -30,6 +30,17 @@ function getTotalDecoratedInstances(
   return total;
 }
 
+function simpleHashString(str: string): string {
+  //return str;
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash.toString();// + str;      // as decimal string (e.g., "-123456789")
+  // or: return Math.abs(hash).toString(16); // as hex string (e.g., "7f9b7a5")
+}
+
 export function activate(context: vscode.ExtensionContext) {
   let highlightList: string[] = []
   let colorMap: ColorMap = {}
@@ -45,14 +56,14 @@ export function activate(context: vscode.ExtensionContext) {
     }
     editors.forEach(editor => {
       const rangeList = getVarRangeList(editor, variable)
-      if (!(variable in colorMap)) {
-        colorMap[variable] = decorator.getNewColor(Object.values(colorMap))
+      if (!(simpleHashString(variable) in colorMap)) {
+        colorMap[simpleHashString(variable)] = decorator.getNewColor(Object.values(colorMap))
       }
       decorator.highlightRange(
         editor,
         rangeList,
         variable,
-        colorMap[variable]
+        colorMap[simpleHashString(variable)]
       )
     })
 
